@@ -146,7 +146,6 @@ auth_req.add_header('Authorization', "Basic {}".format(vim.eval("g:spotify_token
 auth_resp = urllib.request.urlopen(auth_req)
 auth_code = json.loads(auth_resp.read())["access_token"]
 
-search_query = vim.eval("a:query").replace(' ', '+')
 url = f"https://api.spotify.com/v1/me/player/queue?uri={vim.eval('a:track')}" 
 req = urllib.request.Request(url,)
 req.add_header('Authorization', "Bearer {}".format(auth_code))
