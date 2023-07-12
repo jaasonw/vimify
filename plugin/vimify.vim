@@ -155,20 +155,6 @@ j = json.loads(resp.read())["tracks"]["items"]
 
 vim.command('call s:Next()')
 
-# if osSystem == 'Darwin':
-# if osSystem == 'Darwin':
-#   subprocess.call(['osascript',
-#                    '-e'
-#                    'tell app "spotify" to play track "spotify:track:'+vim.eval("a:track")+'"'],
-#                    stdout=open(os.devnull, 'wb'))
-# elif osSystem == 'Linux' or osSystem == "Linux2":
-#   subprocess.call(['dbus-send',
-#                    '--print-reply',
-#                    '--dest=org.mpris.MediaPlayer2.spotify',
-#                    '/org/mpris/MediaPlayer2',
-#                    'org.mpris.MediaPlayer2.Player.OpenUri',
-#                    'string:spotify:track:'+vim.eval("a:track")],
-#                    stdout=open(os.devnull, 'wb'))
 endpython
 endfunction
 
