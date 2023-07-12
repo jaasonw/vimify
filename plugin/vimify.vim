@@ -138,19 +138,37 @@ function! s:LoadTrack(track)
 call s:Pause()
 python3 << endpython
 import vim
-if osSystem == 'Darwin':
-  subprocess.call(['osascript',
-                   '-e'
-                   'tell app "spotify" to play track "spotify:track:'+vim.eval("a:track")+'"'],
-                   stdout=open(os.devnull, 'wb'))
-elif osSystem == 'Linux' or osSystem == "Linux2":
-  subprocess.call(['dbus-send',
-                   '--print-reply',
-                   '--dest=org.mpris.MediaPlayer2.spotify',
-                   '/org/mpris/MediaPlayer2',
-                   'org.mpris.MediaPlayer2.Player.OpenUri',
-                   'string:spotify:track:'+vim.eval("a:track")],
-                   stdout=open(os.devnull, 'wb'))
+
+auth_url = "https://accounts.spotify.com/api/token"
+auth_req = urllib.request.Request(auth_url,
+"grant_type=client_credentials".encode('ascii'),)
+auth_req.add_header('Authorization', "Basic {}".format(vim.eval("g:spotify_token")))
+auth_resp = urllib.request.urlopen(auth_req)
+auth_code = json.loads(auth_resp.read())["access_token"]
+
+search_query = vim.eval("a:query").replace(' ', '+')
+url = f"https://api.spotify.com/v1/me/player/queue?uri={vim.eval('a:track')}" 
+req = urllib.request.Request(url,)
+req.add_header('Authorization', "Bearer {}".format(auth_code))
+resp = urllib.request.urlopen(req, method="POST")
+j = json.loads(resp.read())["tracks"]["items"]
+
+vim.command('call s:Next()')
+
+" if osSystem == 'Darwin':
+" if osSystem == 'Darwin':
+"   subprocess.call(['osascript',
+"                    '-e'
+"                    'tell app "spotify" to play track "spotify:track:'+vim.eval("a:track")+'"'],
+"                    stdout=open(os.devnull, 'wb'))
+" elif osSystem == 'Linux' or osSystem == "Linux2":
+"   subprocess.call(['dbus-send',
+"                    '--print-reply',
+"                    '--dest=org.mpris.MediaPlayer2.spotify',
+"                    '/org/mpris/MediaPlayer2',
+"                    'org.mpris.MediaPlayer2.Player.OpenUri',
+"                    'string:spotify:track:'+vim.eval("a:track")],
+"                    stdout=open(os.devnull, 'wb'))
 endpython
 endfunction
 
