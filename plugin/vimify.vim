@@ -147,9 +147,9 @@ auth_resp = urllib.request.urlopen(auth_req)
 auth_code = json.loads(auth_resp.read())["access_token"]
 
 url = f"https://api.spotify.com/v1/me/player/queue?uri={vim.eval('a:track')}" 
-req = urllib.request.Request(url,)
+req = urllib.request.Request(url, method="POST")
 req.add_header('Authorization', "Bearer {}".format(auth_code))
-resp = urllib.request.urlopen(req, method="POST")
+resp = urllib.request.urlopen(req)
 j = json.loads(resp.read())["tracks"]["items"]
 
 vim.command('call s:Next()')
